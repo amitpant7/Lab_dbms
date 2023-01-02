@@ -58,10 +58,11 @@ VALUES ('First Bank Corporation', 'New York'),
 SELECT * from Tbl_company;
 
 INSERT INTO Tbl_manages (employee_name, manager_name)
-VALUES ('Jane Doe', 'John Smith'),
-       ('Bob Johnson', 'Jane Doe'),
-       ('Michael Brown', 'Samantha Williams'),
-       ('Emily Davis', 'Michael Brown');
+VALUES -- ('Jane Doe', 'John Smith'),
+--        ('Bob Johnson', 'Jane Doe'),
+--        ('Michael Brown', 'Samantha Williams'),
+--        ('Emily Davis', 'Michael Brown'),
+       ('Jessica Williams', 'John Smith');
 
 SELECT * from Tbl_manages;
 
@@ -102,23 +103,87 @@ VALUES ('Julie Johnson', 'Tim Smith'),
  
  
  #Qn2
+ 
+ -- Q2a
+ -- method 1
 SELECT employee_name from Tbl_works WHERE company_name = 'First Bank Corporation';
-SELECT Tbl_works.employee_name, Tbl_employee.city from Tbl_works, Tbl_employee WHERE Tbl_works.company_name = 'First Bank Corporation'; 
+-- method 2
+select * from tbl_employee natural join tbl_works where company_name = 'First Bank Corporation';
 
-SELECT Tbl_works.employee_name, Tbl_employee.city, Tbl_employee.street
-From Tbl_works, Tbl_employee WHERE Tbl_works.company_name = 'First Bank Corporation'
-AND Tbl_works.salary > 10000; 
+-- Q2b
+-- 1
+select employee_name, city from tbl_employee where employee_name IN
+(select employee_name from tbl_works WHERE company_name = 'First Bank Corporation'); 
+-- 2 
+select employee_name , city from tbl_employee natural join tbl_works where company_name = 'First Bank Corporation';
 
-SELECT Tbl_employee.employee_name from Tbl_employee,Tbl_company WHERE Tbl_employee.city = Tbl_company.city;
 
+-- Q2C
+-- 1
+SELECT * from tbl_employee where employee_name IN
+ (select employee_name from tbl_works where company_name = 'First Bank Corporation' AND salary > 10000); 
+
+-- 2
+select * from tbl_employee natural join tbl_works where company_name = 'First Bank Corporation'AND salary > 10000;
+
+-- Q2d
+-- 1 
+SELECT *
+FROM Tbl_employee e
+WHERE e.city = (SELECT city FROM Tbl_company c WHERE c.company_name = 
+(SELECT company_name FROM Tbl_works w WHERE w.employee_name = e.employee_name));
+
+-- 2 
+select employee_name from tbl_works natural join tbl_company NATURAL join tbl_employee where tbl_employee.city= tbl_company.city;
+
+#Q 2e, NOT WORKING
+-- 1
+SELECT *
+FROM Tbl_employee e
+WHERE e.city = (SELECT city FROM tbl_employee Where tbl_employee.employee_name in 
+(SELECT manager_name FROM Tbl_manages m WHERE m.employee_name = e.employee_name));
+
+
+-- 2 working, only city 
+select t.employee_name from
+(select employee_name, manager_name,tbl_employee.city from tbl_manages NATURAL join tbl_employee) t
+ join tbl_employee on t.manager_name = tbl_employee.employee_name WHERE t.city = tbl_employee.city;
+ 
+ 
+-- Q2f
 SELECT employee_name from Tbl_works WHERE company_name != 'First Bank Corporation';
 
+-- Q2G
+-- 1
 SELECT @maxsal := Max(salary) 
 FROM Tbl_works Where company_name = 'Small Bank Corporation';
-
 SELECT employee_name from Tbl_works where salary > @maxsal;
 
+-- 2 
+select employee_name from tbl_works where salary >
+(select max(salary) from tbl_works natural join tbl_company  Where company_name = 'Small Bank Corporation');
+
+
+-- Q2h
+-- 1 
 Select company_name from Tbl_company WHERE city IN(SELECT city from Tbl_company where company_name = 'Small Bank Corporation');
+
+-- 2
+select t2.company_name from tbl_company t1 join tbl_company t2 on t1.city = t2.city 
+where t1.company_name = 'Small Bank Corporation' ;
+
+-- Q2i 
+-- 1
+SELECT employee_name from tbl_works 
+where salary > (select avg(salary) from tbl_works w2 where w2.company_name = tbl_works.company_name);
+
+-- 2
+
+
+-- Q2j
+
+
+-- Q2k
 
 # Q.N 3
 
@@ -153,5 +218,7 @@ WHERE tbl_manages.manager_name = tbl_works.employee_name AND tbl_works.company_n
 
 DELETE FROM works
 WHERE company_name = 'Small Bank Corporation';
+
+
 
  
