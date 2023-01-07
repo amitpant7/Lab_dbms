@@ -177,13 +177,17 @@ where t1.company_name = 'Small Bank Corporation' ;
 SELECT employee_name from tbl_works 
 where salary > (select avg(salary) from tbl_works w2 where w2.company_name = tbl_works.company_name);
 
--- 2
-
-
--- Q2j
-
+-- Q.N. 2 j
+select company_name, count(*) as ct from tbl_works group by company_name ORDER BY ct DESC LIMIT 1;
 
 -- Q2k
+select company_name, sum(salary) as ct from tbl_works group by company_name ORDER BY ct ASC LIMIT 1;
+
+
+-- Q2l
+select company_name from tbl_works GROUP BY company_name having 
+avg(salary) > 
+(select avg(salary) from tbl_works where company_name = 'First Bank Corporation');
 
 # Q.N 3
 
