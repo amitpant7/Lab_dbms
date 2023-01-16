@@ -112,3 +112,32 @@ VALUES (128,'Zhang','Computer Science',102),
         
         
 -- Questions No 4
+
+
+
+-- Q.N. 1
+select instructor_name from tbl_instructor where dept_name = "History";
+
+-- Q.N. 2
+select instructor_name, dept_name from tbl_department natural join tbl_instructor where budget>95000; 
+
+-- Q.N. 3
+select instructor_name, course_title from tbl_instructor NATURAL join tbl_teaches natural join tbl_course 
+where dept_name= "computer Science";
+
+-- Q. N. 4
+
+
+-- Q.N. 5
+-- select instructor_name, tbl_department.dept_name, salary from tbl_department left outer join tbl_instructor
+-- on tbl_department.dept_name = tbl_instructor.dept_name group by dept_name; 
+select dept_name, max(salary) from tbl_instructor group by dept_name;
+
+-- Q.N. 6
+select dept_name, salary from tbl_instructor
+where dept_name in (select dept_name from tbl_instructor group by dept_name) order by salary LIMIT 1; 
+
+
+
+-- Q.N. 7
+
